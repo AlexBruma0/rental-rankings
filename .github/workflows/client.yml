@@ -34,111 +34,111 @@ jobs:
     - name: Run ESLint
       run: npm run lint:client
 
-  # build:
-  #   name: Build
-  #   runs-on: ubuntu-latest
+  build:
+    name: Build
+    runs-on: ubuntu-latest
     
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Setup Node JS
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: '16'
-  #       cache: 'npm'
-  #       cache-dependency-path: client/package-lock.json
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node JS
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
 
-  #   - name: Install dependencies
-  #     run: npm run install:client
+    - name: Install dependencies
+      run: npm run install:client
       
-  #   - name: Build 
-  #     run: npm run build:client
-  #     env:
-  #       VITE_API_SERVER_URL: https://rental-app-api-k4v6eblhva-uw.a.run.app
-  #       VITE_MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
+    - name: Build 
+      run: npm run build:client
+      env:
+        VITE_API_SERVER_URL: https://rental-app-api-k4v6eblhva-uw.a.run.app
+        VITE_MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
       
-  #   - name: Upload Build Artifact
-  #     uses: actions/upload-artifact@v3.1.1
-  #     with:
-  #       name: build-artifact
-  #       retention-days: 7
-  #       path: client/dist
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.1
+      with:
+        name: build-artifact
+        retention-days: 7
+        path: client/dist
 
-  # deploy-preview:
-  #   name: Deploy preview to Surge
-  #   runs-on: ubuntu-latest
-  #   if: github.repository_owner == 'RentalReviews' && github.event_name == 'pull_request'
-  #   needs: [build]
-  #   permissions:
-  #     pull-requests: write 
-  #   env:
-  #     SURGE_DOMAIN: ${{ format('https://{0}-{1}-pr{2}-preview.surge.sh', github.repository_owner, 
-  #       github.event.repository.name, github.event.pull_request.number) }}
+  deploy-preview:
+    name: Deploy preview to Surge
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'RentalReviews' && github.event_name == 'pull_request'
+    needs: [build]
+    permissions:
+      pull-requests: write 
+    env:
+      SURGE_DOMAIN: ${{ format('https://{0}-{1}-pr{2}-preview.surge.sh', github.repository_owner, 
+        github.event.repository.name, github.event.pull_request.number) }}
     
-  #   steps:
-  #   - name: Setup Node JS
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: '16'
+    steps:
+    - name: Setup Node JS
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
     
-  #   - name: Download Build Artifact
-  #     uses: actions/download-artifact@v3.0.1
-  #     with:
-  #       name: build-artifact
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3.0.1
+      with:
+        name: build-artifact
     
-  #   - name: Install Surge
-  #     run: npm install --global surge
+    - name: Install Surge
+      run: npm install --global surge
       
-  #   - name: Deploy to Surge
-  #     run: |
-  #       cp index.html 200.html
-  #       surge ./ ${{ env.SURGE_DOMAIN }}
-  #     env:
-  #       SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-  #       SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+    - name: Deploy to Surge
+      run: |
+        cp index.html 200.html
+        surge ./ ${{ env.SURGE_DOMAIN }}
+      env:
+        SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+        SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
       
-  #   - name: Check if deploy comment exists
-  #     uses: peter-evans/find-comment@v2
-  #     id: fc
-  #     with:
-  #       issue-number: ${{ github.event.pull_request.number }}
-  #       comment-author: 'github-actions[bot]'
-  #       body-includes: Client preview for this PR is available at
+    - name: Check if deploy comment exists
+      uses: peter-evans/find-comment@v2
+      id: fc
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Client preview for this PR is available at
 
-  #   - name: Share/Update deployment link
-  #     uses: peter-evans/create-or-update-comment@v2
-  #     with:
-  #       comment-id: ${{ steps.fc.outputs.comment-id }}
-  #       issue-number: ${{ github.event.pull_request.number }}
-  #       body: |
-  #         Client preview for this PR is available at [this link](${{ env.SURGE_DOMAIN }}) :sunglasses: 
-  #       edit-mode: replace
+    - name: Share/Update deployment link
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          Client preview for this PR is available at [this link](${{ env.SURGE_DOMAIN }}) :sunglasses: 
+        edit-mode: replace
 
-  # deploy:
-  #     name: Deploy client
-  #     runs-on: ubuntu-latest
-  #     if: github.repository_owner == 'RentalReviews' && github.event_name == 'push'
-  #     needs: [build]
-  #     env:
-  #       SURGE_DOMAIN: https://rentalranking.surge.sh
+  deploy:
+      name: Deploy client
+      runs-on: ubuntu-latest
+      if: github.repository_owner == 'RentalReviews' && github.event_name == 'push'
+      needs: [build]
+      env:
+        SURGE_DOMAIN: https://rentalranking.surge.sh
       
-  #     steps:
-  #     - name: Setup Node JS
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '16'
+      steps:
+      - name: Setup Node JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
       
-  #     - name: Download Build Artifact
-  #       uses: actions/download-artifact@v3.0.1
-  #       with:
-  #         name: build-artifact
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: build-artifact
       
-  #     - name: Install Surge
-  #       run: npm install --global surge
+      - name: Install Surge
+        run: npm install --global surge
         
-  #     - name: Deploy to Surge
-  #       run: |
-  #         cp index.html 200.html
-  #         surge ./ ${{ env.SURGE_DOMAIN }}
-  #       env:
-  #         SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-  #         SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+      - name: Deploy to Surge
+        run: |
+          cp index.html 200.html
+          surge ./ ${{ env.SURGE_DOMAIN }}
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
