@@ -1,5 +1,39 @@
-# deployment:
-#   production:
-#     branch: master
-#     commands:
-#       - surge --project .././client --domain rentalrankings.surge.sh
+version: 2.1
+
+jobs:
+  # Job one with a unique name
+ build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node JS
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install dependencies
+      run: npm run install:client
+      
+    - name: Build 
+      run: npm run build:client
+      env:
+        VITE_API_SERVER_URL: https://eng-contact-396318.uc.r.appspot.com
+        VITE_MAP_API_KEY: AIzaSyBZtfTtZhYG2wqGJuKPXFOYce2b7MSJwWI
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.1
+      with:
+        name: build-artifact
+        retention-days: 7
+        path: client/dist
+
+# workflows:
+#   # Name of workflow
+#   hello_and_goodbye:
+#     # List of jobs that will run
+#     jobs:
+#       - say_hello
