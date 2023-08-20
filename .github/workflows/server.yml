@@ -12,6 +12,9 @@ on:
         - '.github/workflows/server.yml'
   pull_request:
     branches: [ main ]
+    paths:
+        - 'api/**'
+        - '.github/workflows/server.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
