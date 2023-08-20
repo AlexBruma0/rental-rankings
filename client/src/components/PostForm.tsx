@@ -251,7 +251,7 @@ export const PostForm = (props: {
             <Flex direction="column" gap={4}>
               <FormControl>
                 <FormLabel htmlFor="title">
-                  Title
+                  Address
                   <Text as="span" color="pink">
                     {" "}
                     *

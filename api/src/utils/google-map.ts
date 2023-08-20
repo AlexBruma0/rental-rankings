@@ -17,8 +17,10 @@ const getCoordinates = async (address: string): Promise<{ lat: string; lng: stri
   const data = await response.json();
 
   if (!data || data.status != "OK") {
+    console.log(data, GOOGLE_MAPS_API_KEY);
     return null;
   } else {
+    console.log(data, GOOGLE_MAPS_API_KEY);
     const { lat, lng } = data.results[0].geometry.location;
     return { lat, lng };
   }

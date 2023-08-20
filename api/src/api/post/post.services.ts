@@ -195,6 +195,7 @@ const getAllPosts = async () => {
     },
   });
   return posts;
+  //return []
 };
 
 const createPostPhoto = async (url: string, postId: string) => {

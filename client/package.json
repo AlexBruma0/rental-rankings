@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified.\""
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.17",
@@ -27,6 +28,7 @@
     "lorem-ipsum": "^2.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-geocode": "^0.2.3",
     "react-icons": "^4.7.1",
     "react-redux": "^8.0.5",
     "react-responsive-carousel": "^3.2.23",
