@@ -1,5 +1,5 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Client pipeline
+run-name: Client pipeline
 on: [push]
 jobs:
   build:
@@ -27,4 +27,41 @@ jobs:
       env:
         VITE_API_SERVER_URL: https://eng-contact-396318.uc.r.appspot.com
         VITE_MAP_API_KEY: ${{ secrets.MAP_API_KEY }}
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3.1.1
+      with:
+        name: build-artifact
+        retention-days: 7
+        path: client/dist
+
+
+  deploy:
+    name: Deploy client
+    runs-on: ubuntu-latest
+    needs: [build]
+    env:
+      SURGE_DOMAIN: https://rentalrankings.surge.sh
+    
+    steps:
+    - name: Setup Node JS
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3.0.1
+      with:
+        name: build-artifact
+    
+    - name: Install Surge
+      run: npm install --global surge
+      
+    - name: Deploy to Surge
+      run: |
+        cp index.html 200.html
+        surge ./ ${{ env.SURGE_DOMAIN }}
+      env:
+        SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+        SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
 
