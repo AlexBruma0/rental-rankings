@@ -7,61 +7,30 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-    paths:
-        - 'api/**'
-        - '.github/workflows/server.yml'
   pull_request:
     branches: [ main ]
-    paths:
-        - 'api/**'
-        - '.github/workflows/server.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    build:
-  
-      runs-on: ubuntu-latest
-  
-      strategy:
-        matrix:
-          node-version: [14.x, 16.x, 18.x]
-          # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-  
-      steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-  
-      - name: Install dependencies
-        run: npm run install:server
-      
-      - name: Build 
-        run: npm run build:server
-  
-  
-    deploy:
-      name: Deploy server
-      runs-on: ubuntu-latest
-      needs: [build]
-      
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+  deploy:
+    name: Deploying to Google Cloud
+    runs-on: ubuntu-latest
     
-        - name: Deploy to App Engine
-          id: deploy
-          uses: google-github-actions/deploy-appengine@v0.2.0
-          with:
-            deliverables: app.yaml
-            version: v1
-            project_id: ${{ secrets.GCP_PROJECT }}
-            credentials: ${{ secrets.GCP_CREDENTIALS }}
-    
-        - name: Test
-          run: curl "${{ steps.deploy.outputs.url }}"
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Deploy to App Engine
+      id: deploy
+      uses: google-github-actions/deploy-appengine@v0.2.0
+      with:
+        deliverables: app.yaml
+        version: v1
+        project_id: ${{ secrets.GCP_PROJECT }}
+        credentials: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Test
+      run: curl "${{ steps.deploy.outputs.url }}"
