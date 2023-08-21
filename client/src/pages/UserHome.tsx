@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Posting from "components/Posting";
 import { PostForm } from "components/PostForm";
 import { userSelector } from "redux/user";
+import { Spinner } from "@chakra-ui/react";
 
 import type { Post } from "types/Post";
 
@@ -13,12 +14,15 @@ const API_URL = `${import.meta.env.VITE_API_SERVER_URL}/api/v1`;
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loadingPost, setLoadingPost] = useState<boolean>(false);
 
   const { user } = useSelector(userSelector);
 
   useEffect(() => {
+    setLoadingPost(true);
     getAll().then((data) => {
       setPosts(data.posts);
+      setLoadingPost(false);
     });
   }, []);
 
@@ -45,17 +49,20 @@ const Home = () => {
           <PostForm isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
         </>
       )}
-      <div id="posts">
-        <Wrap>
-          {posts.map((post, i) => {
-            return (
-              <WrapItem key={i}>
-                <Posting key={i} post={post} />
-              </WrapItem>
-            );
-          })}
-        </Wrap>
-      </div>
+      {loadingPost && <Spinner size="xl" ml="45%" mt="30%" />}
+      {!loadingPost && (
+        <div id="posts">
+          <Wrap>
+            {posts.map((post, i) => {
+              return (
+                <WrapItem key={i}>
+                  <Posting key={i} post={post} />
+                </WrapItem>
+              );
+            })}
+          </Wrap>
+        </div>
+      )}
     </>
   );
 };
