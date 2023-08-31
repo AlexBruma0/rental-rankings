@@ -5,7 +5,7 @@ runtime_config:
   skip_lockdown_document_root: true
 
 env_variables:
-  DATABASE_URL: "postgresql://postgres:password@35.238.4.149/staging?schema=public"
-  JWT_ACCESS_SECRET: "Y7UCpfp6tCYwZdwAW45M"
-  JWT_REFRESH_SECRET: "Zban2GA43KvhSN3LfCzD"
-  GOOGLE_MAPS_API_KEY: "AIzaSyBZtfTtZhYG2wqGJuKPXFOYce2b7MSJwWI"
+  DATABASE_URL: 
+  JWT_ACCESS_SECRET: 
+  JWT_REFRESH_SECRET:
+  GOOGLE_MAPS_API_KEY: 
